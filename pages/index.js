@@ -99,7 +99,7 @@ export default function PaginaInicial() {
                                     }}
                               >
                                     <Titulo tag="h2">Boas vindas de volta!</Titulo>
-                                    <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
+                                    <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[400] }}>
                                           {appConfig.name}
                                     </Text>
 
@@ -109,7 +109,7 @@ export default function PaginaInicial() {
                                                 neutral: {
                                                       textColor: appConfig.theme.colors.neutrals[200],
                                                       mainColor: appConfig.theme.colors.neutrals[900],
-                                                      mainColorHighlight: appConfig.theme.colors.primary[500],
+                                                      mainColorHighlight: appConfig.theme.colors.neutrals[500],
                                                       backgroundColor: appConfig.theme.colors.neutrals[800],
                                                 },
                                           }}
