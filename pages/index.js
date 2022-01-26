@@ -2,6 +2,7 @@ import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
 import {useRouter} from 'next/router'
+import { normalizeRepeatedSlashes } from 'next/dist/shared/lib/utils';
 
 
 
@@ -99,10 +100,10 @@ export default function PaginaInicial() {
                                     <TextField
                                           fullWidth
                                           onChange={function (event) {
-                                                console.log('usuario digitou', event.target.value);
-                                                const valor = event.target.value;
+                                                const name = event.target.value;
 
-                                                setUsername(valor);
+                                                if(name.length > 2)
+                                                setUsername(name);
                                           }}
                                           textFieldColors={{
                                                 neutral: {
