@@ -1,4 +1,5 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
+import { MdDelete } from "react-icons/md";
 import React from 'react';
 import appConfig from '../config.json';
 
@@ -59,7 +60,7 @@ export default function ChatPage() {
                               }}
                         >
 
-                              <MessageList mensagens={listaDeMensagens} />
+                              <MessageList mensagens={listaDeMensagens} setListaDeMensagens={setListaDeMensagens} />
                               {/* Tá mudando o valor: {listaDeMensagens.map((mensagemAtual) => {
                                     return (
                                           <li key={mensagemAtual.id}>
@@ -69,6 +70,10 @@ export default function ChatPage() {
                               })} */}
                               <Box
                                     as="form"
+                                    onSubmit={ (info) => {
+                                          info.preventDefault();
+                                          handleNovaMensagem(mensagem);   
+                                    }}
                                     styleSheet={{
                                           display: 'flex',
                                           alignItems: 'center',
@@ -100,6 +105,17 @@ export default function ChatPage() {
                                                 color: appConfig.theme.colors.neutrals[200],
                                           }}
                                     />
+                                     <Button
+                                          id='enviar'
+                                          type='submit'
+                                          label='Enviar'
+                                          buttonColors={{
+                                                contrastColor: appConfig.theme.colors.neutrals["000"],
+                                                mainColor: appConfig.theme.colors.primary[500],
+                                                mainColorLight: appConfig.theme.colors.primary[400],
+                                                mainColorStrong: appConfig.theme.colors.primary[600],
+                                          }}
+                                    />
                               </Box>
                         </Box>
                   </Box>
@@ -125,8 +141,8 @@ function Header() {
       )
 }
 
-function MessageList(props) {
-      console.log('MessageList', props);
+function MessageList(props, ) {
+      
       return (
             <Box
                   tag="ul"
@@ -181,6 +197,27 @@ function MessageList(props) {
                                           >
                                                 {(new Date().toLocaleDateString())}
                                           </Text>
+                                          <Button
+                                          type='submit'
+                                          label={<MdDelete/>}
+                                          onClick={function(){
+                                                
+                                                var listaAtualizada  = props.mensagens.filter((m) => {
+                                                      if(m.id != mensagem.id){
+                                                            return m;
+                                                      }
+                                                })
+
+                                               props.setListaDeMensagens(listaAtualizada)
+                                          }}
+                                          buttonColors={{
+                                                mainColor: appConfig.theme.colors.neutrals[600],
+                                          }}
+                                          styleSheet={{
+                                               color: 'white',
+                                               width:'20px',
+                                          }}
+                                    />
                                     </Box>
                                     {mensagem.texto}
                               </Text>
