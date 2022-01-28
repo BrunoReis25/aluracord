@@ -75,7 +75,7 @@ export default function PaginaInicial() {
                                           infosDoEvento.preventDefault();
                                           console.log('alguém submeteu uma página.');
                                           // window.location.href = '/chat';
-                                          roteamento.push('/chat');
+                                          roteamento.push(`/chat?username=${username}`);
                                     }}
                                     styleSheet={{
                                           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',

@@ -2,18 +2,29 @@ import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import { MdDelete } from "react-icons/md";
 import React from 'react';
 import appConfig from '../config.json';
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
+import { useRouter } from 'next/router';
+import { ButtonSendSticker } from '../source/components/ButtonSendSticker';
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMwMzcyMywiZXhwIjoxOTU4ODc5NzIzfQ.6iTaH4n3WbO-iyyPQ0GMd_lOAzPGj2AX9gML9xnAOOI';
 const SUPABASE_URL = 'https://mydyhywwtbveksatxtii.supabase.co';
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-
+function escutaMensagensEmTempoReal(adicionaMensagem){
+      return supabaseClient
+            .from('mensagens')
+            .on('INSERT', (repostaLive) => {
+                 adicionaMensagem(repostaLive.new); 
+            })    
+            .subscribe();
+}
 
 export default function ChatPage() {
       const [mensagem, setMensagem] = React.useState('');
       const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
-      
+      const roteamento = useRouter();
+      const usuarioLogado = roteamento.query.username;
+
       React.useEffect(() => {
             supabaseClient
                   .from('mensagens')
@@ -23,25 +34,31 @@ export default function ChatPage() {
                         console.log('Dados da consulta:', data)
                         setListaDeMensagens(data);
                   });
+
+            escutaMensagensEmTempoReal((novaMensagem) => {
+                  console.log('Nova mensagem', novaMensagem);
+                  setListaDeMensagens((valorAtualDaLista) => {
+                        return [
+                              novaMensagem,
+                              ...valorAtualDaLista,
+                        ]
+                  });
+            });
       }, []);
 
       function handleNovaMensagem(novaMensagem) {
             const mensagem = {
-                  de: 'brunoreis25',
+                  de: usuarioLogado,
                   texto: novaMensagem,
             };
 
             supabaseClient
                   .from('mensagens')
                   .insert([
-                        mensagem,
+                        mensagem
                   ])
                   .then(({ data }) => {
                         console.log('Criando mensagem: ', data);
-                        setListaDeMensagens([
-                              data[0],
-                              ...listaDeMensagens,
-                        ]);
                   });
 
             
@@ -87,13 +104,7 @@ export default function ChatPage() {
                         >
 
                               <MessageList mensagens={listaDeMensagens} setListaDeMensagens={setListaDeMensagens} />
-                              {/* Tá mudando o valor: {listaDeMensagens.map((mensagemAtual) => {
-                                    return (
-                                          <li key={mensagemAtual.id}>
-                                                {mensagemAtual.de}: {mensagemAtual.texto}
-                                          </li>
-                                    )
-                              })} */}
+
                               <Box
                                     as="form"
                                     onSubmit={ (info) => {
@@ -142,6 +153,10 @@ export default function ChatPage() {
                                                 mainColorStrong: appConfig.theme.colors.primary[600],
                                           }}
                                     />
+
+                                    <ButtonSendSticker onStickerClick={(sticker) => {
+                                          handleNovaMensagem(':sticker: ' + sticker);
+                                    }} />
                               </Box>
                         </Box>
                   </Box>
@@ -245,7 +260,12 @@ function MessageList(props, ) {
                                           }}
                                     />
                                     </Box>
-                                    {mensagem.texto}
+                                    {mensagem.texto.startsWith(':sticker:') ? (
+                                          <Image src={mensagem.texto.replace(':sticker:', '')} />
+                                    )
+                                    :(
+                                          mensagem.texto
+                                    )}
                               </Text>
                         );
                   })}
